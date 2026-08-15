@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../config/api_config.dart';
@@ -49,6 +50,10 @@ class ApiClient {
 
     _dio!.interceptors.add(
       InterceptorsWrapper(
+        onRequest: (options, handler) {
+          _addAuthHeader(options);
+          handler.next(options);
+        },
         onError: (DioException err, ErrorInterceptorHandler handler) {
           final message = _normalizeError(err);
           handler.reject(DioException(
@@ -80,6 +85,38 @@ class ApiClient {
       }
     }
     return _currentBaseUrl;
+  }
+
+  // Protected endpoints that require Firebase Auth token
+  static const _protectedPaths = {
+    '/api/contract/upload',
+    '/api/contract/segment',
+    '/api/contract/segment/file',
+    '/api/contract/classify',
+    '/api/contract/classify/batch',
+    '/api/contract/summarize',
+    '/api/contract/analyze',
+    '/api/contract/compare',
+  };
+
+  Future<void> _addAuthHeader(RequestOptions options) async {
+    final path = options.path;
+    final needsAuth = _protectedPaths.any((p) => path.startsWith(p));
+
+    if (!needsAuth) return;
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final token = await user.getIdToken(true); // force refresh if needed
+        if (token != null && token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+      }
+    } catch (e) {
+      // Token retrieval failed, request will proceed without auth
+      // Server will return 401 if auth is actually required
+    }
   }
 
   String _normalizeError(DioException err) {
