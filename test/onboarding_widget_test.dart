@@ -22,7 +22,7 @@ void main() {
       });
 
       await tester.pumpWidget(const AppWrapper());
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
       expect(find.text('Continue with Google'), findsOneWidget);
@@ -45,7 +45,7 @@ void main() {
     });
 
     await tester.pumpWidget(const AppWrapper());
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
     expect(find.text('Intelligent Contract Analysis'), findsOneWidget);

@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/language/language_bloc.dart';
 import 'bloc/theme/theme_bloc.dart';
+import 'bloc/analysis/analysis_bloc.dart';
+import 'bloc/comparison/comparison_bloc.dart';
+import 'bloc/chat/chat_bloc.dart';
+import 'bloc/history/history_bloc.dart';
 import 'routes/app_routes.dart';
+import 'services/backend_repository.dart';
+import 'services/history_store.dart';
+import 'services/api_client.dart';
 import 'theme/app_theme.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final SharedPreferences prefs;
+
+  const App({super.key, required this.prefs});
 
   @override
   Widget build(BuildContext context) {
+    final apiClient = ApiClient(prefs: prefs);
+    final backendRepository = BackendRepository(apiClient);
+    final historyStore = HistoryStore(prefs);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -20,6 +34,27 @@ class App extends StatelessWidget {
         BlocProvider(
           create: (_) =>
               LanguageBloc()..add(ChangeLanguage(const Locale('en', 'US'))),
+        ),
+        BlocProvider(
+          create: (_) => AnalysisBloc(
+            repo: backendRepository,
+            history: historyStore,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ComparisonBloc(
+            repo: backendRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => ChatBloc(
+            repo: backendRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => HistoryBloc(
+            store: historyStore,
+          ),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(

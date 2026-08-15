@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+import '../models/analysis_models.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_card.dart';
 import '../widgets/app_section_header.dart';
@@ -10,9 +12,19 @@ class ClauseDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final clause = ModalRoute.of(context)?.settings.arguments as AnalyzedClause?;
+    final l10n = AppLocalizations.of(context)!;
+
+    if (clause == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.clauseDetails)),
+        body: Center(child: Text(l10n.noClauseData)),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clause Details'),
+        title: Text(l10n.clauseDetails),
         actions: [
           IconButton(icon: const Icon(Icons.bookmark_border), onPressed: () {}),
         ],
@@ -20,79 +32,82 @@ class ClauseDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const AppSectionHeader(
-            title: 'Clause 6.2 - Liability',
-            subtitle: 'Flagged for high risk exposure',
+          AppSectionHeader(
+            title: clause.title,
+            subtitle: clause.sectionTitle ?? l10n.riskTagHigh,
           ),
           const SizedBox(height: 12),
           AppCard(
             child: Text(
-              'The supplier shall be liable for all direct damages, and in no event shall the liability cap be less than 2.5x the annual contract value. Indirect damages are excluded except for data breaches.',
+              clause.description ?? '',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-              TagChip(label: 'High Risk', color: AppColors.riskHigh),
-              SizedBox(width: 8),
-              TagChip(label: 'Needs Negotiation', color: AppColors.riskMedium),
+            children: [
+              TagChip(
+                label: _riskLabel(clause.riskLevel, l10n),
+                color: _riskColor(clause.riskLevel),
+              ),
+              if ((clause.recommendation ?? '').isNotEmpty) ...[
+                const SizedBox(width: 8),
+                TagChip(label: l10n.needsAction, color: AppColors.riskMedium),
+              ],
             ],
           ),
-          const SizedBox(height: 20),
-          const AppSectionHeader(
-            title: 'AI Recommendations',
-            subtitle: 'Suggested edits and rationale',
-          ),
-          const SizedBox(height: 12),
-          ..._recommendations.map(
-            (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.detail,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
+          if ((clause.recommendation ?? '').isNotEmpty) ...[
+            const SizedBox(height: 20),
+            AppSectionHeader(
+              title: l10n.aiRecommendations,
+              subtitle: l10n.suggestedEditsRationale,
+            ),
+            const SizedBox(height: 12),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.recommendation,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    clause.recommendation ?? '',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
   }
+
+  static String _riskLabel(String riskLevel, AppLocalizations l10n) {
+    switch (riskLevel.toLowerCase()) {
+      case 'high':
+        return l10n.high;
+      case 'medium':
+        return l10n.medium;
+      case 'low':
+        return l10n.low;
+      default:
+        return riskLevel;
+    }
+  }
+
+  static Color _riskColor(String riskLevel) {
+    switch (riskLevel.toLowerCase()) {
+      case 'high':
+        return AppColors.riskHigh;
+      case 'medium':
+        return AppColors.riskMedium;
+      case 'low':
+        return AppColors.riskLow;
+      default:
+        return AppColors.riskMedium;
+    }
+  }
 }
-
-class _Recommendation {
-  final String title;
-  final String detail;
-
-  const _Recommendation({required this.title, required this.detail});
-}
-
-const _recommendations = [
-  _Recommendation(
-    title: 'Reduce liability cap',
-    detail:
-        'Align with policy by proposing a maximum of 1.5x annual fees, with carve-outs for gross negligence only.',
-  ),
-  _Recommendation(
-    title: 'Add mutual indemnity',
-    detail:
-        'Introduce reciprocal indemnity language to protect against third-party claims.',
-  ),
-  _Recommendation(
-    title: 'Clarify breach response',
-    detail:
-        'Specify a 72-hour notification timeline and require forensics cooperation.',
-  ),
-];

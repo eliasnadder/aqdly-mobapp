@@ -11,13 +11,11 @@ import 'screens/onboarding_screen.dart';
 class AppWrapper extends StatelessWidget {
   const AppWrapper({super.key});
 
-  Future<bool> _checkOnboardingStatus() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<bool> _checkOnboardingStatus(SharedPreferences prefs) async {
     return prefs.getBool('onboarding_completed') ?? false;
   }
 
-  Future<bool> _isAuthenticated() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<bool> _isAuthenticated(SharedPreferences prefs) async {
     final savedStatus = prefs.getBool('user_authenticated') ?? false;
     if (savedStatus) {
       return true;
@@ -44,10 +42,10 @@ class AppWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _isAuthenticated(),
-      builder: (context, authSnapshot) {
-        if (authSnapshot.connectionState == ConnectionState.waiting) {
+    return FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder: (context, prefsSnapshot) {
+        if (prefsSnapshot.connectionState == ConnectionState.waiting) {
           return _buildLocalizedApp(
             home: const Scaffold(
               body: Center(child: CircularProgressIndicator()),
@@ -55,15 +53,12 @@ class AppWrapper extends StatelessWidget {
           );
         }
 
-        final isAuthenticated = authSnapshot.data ?? false;
-        if (!isAuthenticated) {
-          return _buildLocalizedApp(home: const AuthScreen());
-        }
+        final prefs = prefsSnapshot.data!;
 
         return FutureBuilder<bool>(
-          future: _checkOnboardingStatus(),
-          builder: (context, onboardingSnapshot) {
-            if (onboardingSnapshot.connectionState == ConnectionState.waiting) {
+          future: _isAuthenticated(prefs),
+          builder: (context, authSnapshot) {
+            if (authSnapshot.connectionState == ConnectionState.waiting) {
               return _buildLocalizedApp(
                 home: const Scaffold(
                   body: Center(child: CircularProgressIndicator()),
@@ -71,12 +66,30 @@ class AppWrapper extends StatelessWidget {
               );
             }
 
-            final onboardingCompleted = onboardingSnapshot.data ?? false;
-            if (!onboardingCompleted) {
-              return _buildLocalizedApp(home: const OnboardingScreen());
+            final isAuthenticated = authSnapshot.data ?? false;
+            if (!isAuthenticated) {
+              return _buildLocalizedApp(home: const AuthScreen());
             }
 
-            return const App();
+            return FutureBuilder<bool>(
+              future: _checkOnboardingStatus(prefs),
+              builder: (context, onboardingSnapshot) {
+                if (onboardingSnapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLocalizedApp(
+                    home: const Scaffold(
+                      body: Center(child: CircularProgressIndicator()),
+                    ),
+                  );
+                }
+
+                final onboardingCompleted = onboardingSnapshot.data ?? false;
+                if (!onboardingCompleted) {
+                  return _buildLocalizedApp(home: const OnboardingScreen());
+                }
+
+                return App(prefs: prefs);
+              },
+            );
           },
         );
       },

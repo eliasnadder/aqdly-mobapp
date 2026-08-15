@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../l10n/app_localizations.dart';
 import '../bloc/language/language_bloc.dart';
 import '../bloc/theme/theme_bloc.dart';
+import '../config/api_config.dart';
+import '../services/api_client.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_card.dart';
 import '../widgets/app_section_header.dart';
@@ -188,6 +191,8 @@ class ProfileSettingsScreen extends StatelessWidget {
                   },
                 ),
                 Divider(height: 1),
+                _BackendUrlTile(),
+                Divider(height: 1),
                 SettingTile(
                   icon: Icons.lock_outline,
                   title: l10n.security,
@@ -205,6 +210,99 @@ class ProfileSettingsScreen extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: const AppBottomNavigation(currentIndex: 3),
+    );
+  }
+}
+
+class _BackendUrlTile extends StatefulWidget {
+  const _BackendUrlTile();
+
+  @override
+  State<_BackendUrlTile> createState() => _BackendUrlTileState();
+}
+
+class _BackendUrlTileState extends State<_BackendUrlTile> {
+  final _controller = TextEditingController();
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUrl();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadCurrentUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    final url = prefs.getString(kApiBaseUrlPrefKey) ?? kDefaultApiBaseUrl;
+    if (mounted) {
+      _controller.text = url;
+    }
+  }
+
+  Future<void> _saveUrl() async {
+    final url = _controller.text.trim();
+    if (url.isEmpty) return;
+
+    setState(() => _saving = true);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(kApiBaseUrlPrefKey, url);
+    ApiClient.updateBaseUrl(url);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.backendUrlSaved)),
+      );
+    }
+    setState(() => _saving = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return SettingTile(
+      icon: Icons.cloud_outlined,
+      title: l10n.backendUrl,
+      subtitle: _controller.text.isEmpty ? l10n.backendUrlHint : _controller.text,
+      onTap: () {
+        showDialog<void>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: Text(l10n.backendUrl),
+            content: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: l10n.backendUrlHint,
+                border: const OutlineInputBorder(),
+              ),
+              autofocus: true,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton(
+                onPressed: _saving ? null : () {
+                  Navigator.of(dialogContext).pop();
+                  _saveUrl();
+                },
+                child: _saving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(l10n.save),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

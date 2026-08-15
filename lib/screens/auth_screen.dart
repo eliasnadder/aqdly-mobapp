@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const App()),
+        MaterialPageRoute(builder: (_) => App(prefs: prefs)),
       );
     } on FirebaseAuthException catch (error) {
       if (!mounted) return;
@@ -66,6 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -91,19 +93,19 @@ class _AuthScreenState extends State<AuthScreen> {
                       color: AppColors.primary,
                     ),
                   ),
-                  const Text(
-                    'Welcome to Aqdly',
+                  Text(
+                    l10n.appTitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Sign in with your Google account to continue.',
+                  Text(
+                    l10n.uploadDocumentOrPhoto,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
                     ),
@@ -129,7 +131,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       onPressed: _isLoading ? null : _signInWithGoogle,
                       icon: const Icon(Icons.g_mobiledata_rounded),
                       label: Text(
-                        _isLoading ? 'Signing in...' : 'Continue with Google',
+                        _isLoading ? l10n.analyzing : l10n.continueWithGoogle,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

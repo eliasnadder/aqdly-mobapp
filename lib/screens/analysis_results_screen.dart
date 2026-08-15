@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+import '../models/analysis_models.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_card.dart';
 import '../widgets/app_section_header.dart';
@@ -11,9 +13,25 @@ class AnalysisResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final result = ModalRoute.of(context)?.settings.arguments as AnalysisResult?;
+    final l10n = AppLocalizations.of(context)!;
+
+    if (result == null) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l10n.analysisResults)),
+        body: Center(child: Text(l10n.noAnalysisData)),
+      );
+    }
+
+    final clauses = result.clauses;
+
+    // Derive metrics from actual data
+    final highRiskCount = clauses.where((c) => c.riskLevel.toLowerCase() == 'high').length;
+    final mediumRiskCount = clauses.where((c) => c.riskLevel.toLowerCase() == 'medium').length;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Analysis Results'),
+        title: Text(l10n.analysisResults),
         actions: [
           IconButton(
             icon: const Icon(Icons.download_outlined),
@@ -24,46 +42,52 @@ class AnalysisResultsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const AppSectionHeader(
-            title: 'Summary Score',
-            subtitle: 'AI confidence and risk posture',
+          AppSectionHeader(
+            title: l10n.summaryScore,
+            subtitle: l10n.aiConfidenceRiskPosture,
           ),
           const SizedBox(height: 12),
           AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const MetricTile(
-                  label: 'Overall Compliance',
-                  value: '82%',
-                  trailing: TagChip(label: 'Stable', color: AppColors.riskLow),
-                ),
-                const SizedBox(height: 16),
-                const MetricTile(
-                  label: 'Critical Issues',
-                  value: '2',
-                  trailing: TagChip(label: 'High', color: AppColors.riskHigh),
-                ),
-                const SizedBox(height: 16),
-                const MetricTile(
-                  label: 'Negotiable Clauses',
-                  value: '7',
+                MetricTile(
+                  label: l10n.overallCompliance,
+                  value: '${result.complianceScore}%',
                   trailing: TagChip(
-                    label: 'Medium',
-                    color: AppColors.riskMedium,
+                    label: _complianceLabel(result.complianceScore),
+                    color: _complianceColor(result.complianceScore),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                MetricTile(
+                  label: l10n.criticalIssues,
+                  value: highRiskCount.toString(),
+                  trailing: TagChip(
+                    label: highRiskCount > 0 ? l10n.high : l10n.none,
+                    color: highRiskCount > 0 ? AppColors.riskHigh : AppColors.riskLow,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                MetricTile(
+                  label: l10n.negotiableClauses,
+                  value: mediumRiskCount.toString(),
+                  trailing: TagChip(
+                    label: mediumRiskCount > 0 ? l10n.medium : l10n.none,
+                    color: mediumRiskCount > 0 ? AppColors.riskMedium : AppColors.riskLow,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          const AppSectionHeader(
-            title: 'Key Findings',
-            subtitle: 'Highest impact clauses and recommendations',
+          AppSectionHeader(
+            title: l10n.keyFindings,
+            subtitle: l10n.highestImpactClauses,
           ),
           const SizedBox(height: 12),
-          ..._findings.map(
-            (finding) => Padding(
+          ...clauses.map(
+            (clause) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: AppCard(
                 child: Column(
@@ -71,22 +95,25 @@ class AnalysisResultsScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        TagChip(label: finding.severity, color: finding.color),
+                        TagChip(
+                          label: _riskLabel(clause.riskLevel, l10n),
+                          color: _riskColor(clause.riskLevel),
+                        ),
                         const SizedBox(width: 8),
                         Text(
-                          finding.section,
+                          clause.sectionTitle ?? '',
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      finding.title,
+                      clause.title,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      finding.detail,
+                      clause.description ?? '',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -100,11 +127,11 @@ class AnalysisResultsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Suggested Next Steps',
+                  l10n.suggestedNextSteps,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
-                ..._nextSteps.map(
+                ..._buildNextSteps(result.contractSummary, highRiskCount, mediumRiskCount, l10n).map(
                   (step) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
@@ -133,51 +160,62 @@ class AnalysisResultsScreen extends StatelessWidget {
       ),
     );
   }
+
+  static String _complianceLabel(int score) {
+    if (score >= 80) return 'Good';
+    if (score >= 60) return 'Moderate';
+    return 'Poor';
+  }
+
+  static Color _complianceColor(int score) {
+    if (score >= 80) return AppColors.riskLow;
+    if (score >= 60) return AppColors.riskMedium;
+    return AppColors.riskHigh;
+  }
+
+  static String _riskLabel(String riskLevel, AppLocalizations l10n) {
+    switch (riskLevel.toLowerCase()) {
+      case 'high':
+        return l10n.high;
+      case 'medium':
+        return l10n.medium;
+      case 'low':
+        return l10n.low;
+      default:
+        return riskLevel;
+    }
+  }
+
+  static Color _riskColor(String riskLevel) {
+    switch (riskLevel.toLowerCase()) {
+      case 'high':
+        return AppColors.riskHigh;
+      case 'medium':
+        return AppColors.riskMedium;
+      case 'low':
+        return AppColors.riskLow;
+      default:
+        return AppColors.riskMedium;
+    }
+  }
+
+  static List<String> _buildNextSteps(
+    ContractSummary? summary,
+    int highRisk,
+    int mediumRisk,
+    AppLocalizations l10n,
+  ) {
+    final steps = <String>[];
+    if (highRisk > 0) {
+      steps.add(l10n.shareHighRiskWithCounsel);
+    }
+    if (highRisk > 0 || mediumRisk > 0) {
+      steps.add(l10n.requestRedlinesForHighRisk);
+    }
+    steps.add(l10n.scheduleFollowUpAnalysis);
+    if (highRisk > 0) {
+      steps.add(l10n.reviewKeyRisks(highRisk));
+    }
+    return steps;
+  }
 }
-
-class _Finding {
-  final String section;
-  final String title;
-  final String detail;
-  final String severity;
-  final Color color;
-
-  const _Finding({
-    required this.section,
-    required this.title,
-    required this.detail,
-    required this.severity,
-    required this.color,
-  });
-}
-
-const _findings = [
-  _Finding(
-    section: 'Section 4.3',
-    title: 'Unlimited liability for data breach',
-    detail:
-        'Recommend capping liability to 2x annual contract value to align with policy.',
-    severity: 'High',
-    color: AppColors.riskHigh,
-  ),
-  _Finding(
-    section: 'Section 7.1',
-    title: 'Auto-renewal without notice period',
-    detail: 'Insert 60-day written notice to protect termination flexibility.',
-    severity: 'Medium',
-    color: AppColors.riskMedium,
-  ),
-  _Finding(
-    section: 'Section 9.5',
-    title: 'Subprocessor disclosure window',
-    detail: 'Shorten disclosure timeline from 30 to 10 days for compliance.',
-    severity: 'Medium',
-    color: AppColors.riskMedium,
-  ),
-];
-
-const _nextSteps = [
-  'Share high-risk findings with legal counsel for negotiation playbook.',
-  'Request updated vendor redlines for Section 4.3 and Section 7.1.',
-  'Schedule follow-up analysis after revisions are received.',
-];

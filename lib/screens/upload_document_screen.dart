@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/analysis/analysis_bloc.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/app_colors.dart';
 import '../widgets/app_card.dart';
@@ -19,8 +21,6 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
 
   PlatformFile? _selected;
   String? _error;
-  bool _uploading = false;
-  double _progress = 0;
 
   Future<void> _pick() async {
     setState(() {
@@ -49,136 +49,139 @@ class _UploadDocumentScreenState extends State<UploadDocumentScreen> {
     setState(() => _selected = file);
   }
 
-  Future<void> _upload() async {
+  void _analyze() {
     if (_selected == null) return;
-    setState(() {
-      _uploading = true;
-      _progress = 0;
-    });
-
-    // Simulate upload progress; swap with a real request (e.g. Firebase Storage)
-    // when the backend call is ready.
-    for (var i = 1; i <= 10; i++) {
-      await Future.delayed(const Duration(milliseconds: 120));
-      if (!mounted) return;
-      setState(() => _progress = i / 10);
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _uploading = false;
-      _progress = 0;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('"${_selected!.name}" uploaded successfully.'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    context.read<AnalysisBloc>().add(AnalyzeRequested(_selected!));
   }
 
   @override
   Widget build(BuildContext context) {
     final file = _selected;
     final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.upload),
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          AppSectionHeader(
-            title: l10n.newUpload,
-            subtitle: l10n.documentsAndPhotos,
-          ),
-          const SizedBox(height: 12),
-          _DropZone(
-            file: file,
-            error: _error,
-            onTap: _uploading ? null : _pick,
-            l10n: l10n,
-          ),
-          const SizedBox(height: 16),
-          if (file != null) ...[
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.description_outlined,
-                          color: AppColors.secondary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+      body: BlocListener<AnalysisBloc, AnalysisState>(
+        listener: (context, state) {
+          if (state is AnalysisSuccess) {
+            Navigator.of(context).pushNamed(
+              '/analysis-results',
+              arguments: state.result,
+            );
+          } else if (state is AnalysisError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: AppColors.riskHigh,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            AppSectionHeader(
+              title: l10n.newUpload,
+              subtitle: l10n.documentsAndPhotos,
+            ),
+            const SizedBox(height: 12),
+            _DropZone(
+              file: file,
+              error: _error,
+              onTap: _pick,
+              l10n: l10n,
+            ),
+            const SizedBox(height: 16),
+            if (file != null) ...[
+              AppCard(
+                child: BlocBuilder<AnalysisBloc, AnalysisState>(
+                  builder: (context, state) {
+                    final isLoading = state is AnalysisLoading;
+                    final progress = isLoading ? (state.progress * 100).toStringAsFixed(0) : null;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Text(
-                              file.name,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.titleMedium,
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: AppColors.secondary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.description_outlined,
+                                color: AppColors.secondary,
+                              ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${_formatSize(file.size)} • ${file.extension ?? "file"} • '
-                              '${_formatMime(file)}',
-                              style: Theme.of(context).textTheme.bodySmall,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    file.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${_formatSize(file.size)} • ${file.extension ?? "file"} • '
+                                    '${_formatMime(file)}',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'Remove',
+                              icon: const Icon(Icons.close_rounded),
+                              onPressed: isLoading
+                                  ? null
+                                  : () => setState(() => _selected = null),
                             ),
                           ],
                         ),
-                      ),
-                      IconButton(
-                        tooltip: 'Remove',
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: _uploading
-                            ? null
-                            : () => setState(() => _selected = null),
-                      ),
-                    ],
-                  ),
-                  if (_uploading) ...[
-                    const SizedBox(height: 12),
-                    LinearProgressIndicator(value: _progress),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${l10n.uploading} ${(_progress * 100).toStringAsFixed(0)}%',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ],
+                        if (isLoading) ...[
+                          const SizedBox(height: 12),
+                          LinearProgressIndicator(value: state.progress),
+                          const SizedBox(height: 6),
+                          Text(
+                            '$l10n.analyzing $progress%',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.icon(
-              onPressed: _uploading ? null : _upload,
-              icon: const Icon(Icons.cloud_upload_outlined),
-              label: Text(l10n.uploadButton),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                minimumSize: const Size.fromHeight(48),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: _analyze,
+                icon: const Icon(Icons.analytics_outlined),
+                label: Text(l10n.analyzeButton),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  minimumSize: const Size.fromHeight(48),
+                ),
               ),
+            ],
+            const SizedBox(height: 12),
+            Text(
+              'Any file type is supported (PDF, DOCX, images, scans, etc.). Files larger '
+              'than 10 MB are rejected before upload starts.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline),
             ),
           ],
-          const SizedBox(height: 12),
-          Text(
-            'Any file type is supported (PDF, DOCX, images, scans, etc.). Files larger '
-            'than 10 MB are rejected before upload starts.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+        ),
       ),
       bottomNavigationBar: const AppBottomNavigation(currentIndex: 1),
     );
@@ -232,16 +235,13 @@ class _DropZone extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasFile = file != null;
     final hasError = error != null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final accent = hasError ? AppColors.riskHigh : AppColors.secondary;
-    final borderColor = hasError
-        ? AppColors.riskHigh
-        : (hasFile ? AppColors.secondary : AppColors.surfaceVariant);
+    final borderColor = hasError ? AppColors.riskHigh : (hasFile ? AppColors.secondary : colorScheme.surfaceContainerHighest);
     final bg = hasError
         ? AppColors.riskHigh.withValues(alpha: 0.06)
-        : (hasFile
-              ? AppColors.secondary.withValues(alpha: 0.04)
-              : AppColors.surface);
+        : (hasFile ? AppColors.secondary.withValues(alpha: 0.04) : colorScheme.surface);
 
     return InkWell(
       onTap: onTap,
@@ -269,9 +269,7 @@ class _DropZone extends StatelessWidget {
               child: Icon(
                 hasError
                     ? Icons.error_outline_rounded
-                    : (hasFile
-                          ? Icons.check_circle_outline_rounded
-                          : Icons.upload_file_rounded),
+                    : (hasFile ? Icons.check_circle_outline_rounded : Icons.upload_file_rounded),
                 color: accent,
                 size: 32,
               ),
@@ -289,9 +287,7 @@ class _DropZone extends StatelessWidget {
                   ? error!
                   : 'Documents, scans, photos — any format, max 10 MB',
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: AppColors.outline),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
             ),
             if (!hasFile && !hasError) ...[
               const SizedBox(height: 16),

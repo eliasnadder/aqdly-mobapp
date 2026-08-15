@@ -87,7 +87,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recentAnalyses => 'التحليلات الأخيرة';
 
   @override
-  String get latestAIGeneratedSummaries => 'أحدث ملخصات الذكاء الاصطناعي';
+  String get latestAIGeneratedSummaries => 'أحدث الملخصات المولدة بالذكاء الاصطناعي';
 
   @override
   String get profile => 'الملف الشخصي';
@@ -125,43 +125,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get integrationsConnected => 'DocuSign وSharePoint متصلان';
 
-  // Onboarding translations
-  @override
-  String get onboardingTitle1 => 'Intelligent Contract Analysis';
-
-  @override
-  String get onboardingSubtitle1 => 'تحليل العقود بذكاء';
-
-  @override
-  String get onboardingDescription1 => 'استخدم قوة الذكاء الاصطناعي لفهم وتحليل العقود القانونية بدقة وسرعة. استخرج الشروط الأساسية، وحدد المخاطر المحتملة في ثوانٍ.';
-
-  @override
-  String get onboardingTitle2 => 'AI-Powered Insights';
-
-  @override
-  String get onboardingSubtitle2 => 'رؤى مدعومة بالذكاء الاصطناعي';
-
-  @override
-  String get onboardingDescription2 => 'احصل على رؤى فورية حول بنود العقود والمخاطر والامتثال. يقوم ذكاءنا الاصطناعي بتحليل العقود مثل خبير قانوني مخضرم.';
-
-  @override
-  String get onboardingTitle3 => 'Multi-Language Support';
-
-  @override
-  String get onboardingSubtitle3 => 'دعم متعدد اللغات';
-
-  @override
-  String get onboardingDescription3 => 'قم بتحليل العقود بعدة لغات مع قدرات الترجمة والمقارنة التلقائية.';
-
-  @override
-  String get skip => 'تخطي';
-
-  @override
-  String get next => 'التالي';
-
-  @override
-  String get getStarted => 'ابدأ الآن';
-
   @override
   String get appearance => 'المظهر';
 
@@ -173,4 +136,327 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get system => 'النظام';
+
+  @override
+  String get analysisResults => 'نتائج التحليل';
+
+  @override
+  String get summary => 'الملخص';
+
+  @override
+  String get clauses => 'البنود';
+
+  @override
+  String get riskTagHigh => 'مخاطر مرتفعة';
+
+  @override
+  String get riskTagMedium => 'مخاطر متوسطة';
+
+  @override
+  String get riskTagLow => 'مخاطر منخفضة';
+
+  @override
+  String get compareContracts => 'مقارنة العقود';
+
+  @override
+  String get sideBySideView => 'عرض جنباً إلى جنب';
+
+  @override
+  String get diffHighlights => 'الفروقات';
+
+  @override
+  String get typeAQuestion => 'اكتب سؤالك…';
+
+  @override
+  String get analyzeButton => 'تحليل';
+
+  @override
+  String get analyzing => 'جاري التحليل…';
+
+  @override
+  String get startAiChat => 'بدء الدردشة بالذكاء الاصطناعي';
+
+  @override
+  String get backendUrl => 'عنوان الخادم';
+
+  @override
+  String get backendUrlHint => 'عدّل العنوان عند تغيّر عنوان الشبكة';
+
+  @override
+  String get noAnalysesYet => 'لا توجد تحليلات بعد';
+
+  @override
+  String get analyzeContractFirst => 'حلّل عقدًا أولاً';
+
+  @override
+  String get sources => 'المصادر';
+
+  @override
+  String get clauseSingular => 'بند';
+
+  @override
+  String get clausePlural => 'بنود';
+
+  @override
+  String get deleteHistoryEntry => 'حذف العنصر؟';
+
+  @override
+  String get deleteHistoryConfirm => 'سيُحذف من السجل على هذا الجهاز.';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get clear => 'مسح';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get pickFirstContract => 'اختر العقد الأول';
+
+  @override
+  String get pickSecondContract => 'اختر العقد الثاني';
+
+  @override
+  String get compare => 'مقارنة';
+
+  @override
+  String get analyzeFailed => 'فشل التحليل';
+
+  @override
+  String get comparisonFailed => 'فشل المقارنة';
+
+  @override
+  String get chatFailed => 'فشل الدردشة';
+
+  @override
+  String get exportDisabledTooltip => 'التصدير غير متوفر في هذه النسخة';
+
+  @override
+  String get exportReport => 'تصدير التقرير';
+
+  @override
+  String get pickDifferentFile => 'اختر ملفًا آخر';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get backendUrlSaved => 'تم حفظ عنوان الخادم';
+
+  @override
+  String get skip => 'تخطي';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get completed => 'مكتمل';
+
+  @override
+  String get needsReview => 'يحتاج مراجعة';
+
+  @override
+  String get critical => 'حرج';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
+  String get deleteEntry => 'حذف العنصر؟';
+
+  @override
+  String get deleteEntryConfirmation => 'سيُحذف من السجل على هذا جهاز.';
+
+  @override
+  String get recentActivity => 'النشاط الأخير';
+
+  @override
+  String get sortedByMostRecent => 'مرتب بالأحدث';
+
+  @override
+  String get monitoringActive => 'المراقبة نشطة';
+
+  @override
+  String get priorityItems => 'عناصر أولوية';
+
+  @override
+  String get clausesCount => 'بنود';
+
+  @override
+  String get low => 'منخفض';
+
+  @override
+  String get high => 'مرتفع';
+
+  @override
+  String get medium => 'متوسط';
+
+  @override
+  String get noComparisonData => 'لا توجد بيانات مقارنة';
+
+  @override
+  String get compareTwoContracts => 'قارن عقدين';
+
+  @override
+  String get chatSession => 'جلسة الدردشة';
+
+  @override
+  String get preparingRag => 'جاري تجهيز الاسترجاع…';
+
+  @override
+  String get askAiSummarizeNegotiate => 'اسأل الذكاء الاصطناعي لتلخيص أو مقارنة أو تفاوض';
+
+  @override
+  String get noActiveChatSession => 'لا توجد جلسة دردشة نشطة';
+
+  @override
+  String get startNewSessionPrompt => 'ابدأ جلسة جديدة لبدء الدردشة مع الذكاء الاصطناعي';
+
+  @override
+  String get startNewSession => 'بدء جلسة جديدة';
+
+  @override
+  String get noMessagesYet => 'لا توجد رسائل بعد';
+
+  @override
+  String get askQuestionToStart => 'اطرح سؤالاً للبدء';
+
+  @override
+  String get typeQuestionPlaceholder => 'اكتب سؤالك…';
+
+  @override
+  String get closeSession => 'إغلاق الجلسة';
+
+  @override
+  String get aiSummary => 'ملخص الذكاء الاصطناعي';
+
+  @override
+  String get contractAnalysis => 'تحليل العقد';
+
+  @override
+  String get noRecentAnalyses => 'لا توجد تحليلات حديثة';
+
+  @override
+  String get analyzeFirstContract => 'حلل عقداً أولاً';
+
+  @override
+  String get noHistoryYet => 'لا يوجد سجل بعد';
+
+  @override
+  String get clearHistory => 'مسح السجل';
+
+  @override
+  String get clearHistoryConfirmation => 'سيؤدي هذا إلى إزالة جميع عناصر السجل من هذا الجهاز.';
+
+  @override
+  String get unknownVersion => 'إصدار غير معروف';
+
+  @override
+  String get aiRecommendations => 'توصيات الذكاء الاصطناعي';
+
+  @override
+  String get suggestedEditsRationale => 'التعديلات المقترحة والأساس المنطقي';
+
+  @override
+  String get needsAction => 'يتطلب إجراءً';
+
+  @override
+  String get inContract1 => 'في العقد الأول';
+
+  @override
+  String get inContract2 => 'في العقد الثاني';
+
+  @override
+  String get noSignificantDifferences => 'لم يتم العثور على فروقات جوهرية';
+
+  @override
+  String get clauseDifferencesAiSummary => 'فروقات البنود — ملخص الذكاء الاصطناعي';
+
+  @override
+  String get aiSummarizedDeltas => 'الدلالات الموجزة بالذكاء الاصطناعي';
+
+  @override
+  String get uploadContract => 'رفع عقد';
+
+  @override
+  String get compareVersions => 'مقارنة الإصدارات';
+
+  @override
+  String get none => 'لا شيء';
+
+  @override
+  String get summaryScore => 'نقاط الملخص';
+
+  @override
+  String get aiConfidenceRiskPosture => 'ثقة الذكاء الاصطناعي ووضع المخاطر';
+
+  @override
+  String get overallCompliance => 'الامتثال الإجمالي';
+
+  @override
+  String get criticalIssues => 'القضايا الحرجة';
+
+  @override
+  String get negotiableClauses => 'البنود القابلة للتفاوض';
+
+  @override
+  String get shareHighRiskWithCounsel => 'مشاركة العناصر عالية المخاطر مع المستشار القانوني';
+
+  @override
+  String get requestRedlinesForHighRisk => 'طلب تعديلات للبنود عالية المخاطر';
+
+  @override
+  String get scheduleFollowUpAnalysis => 'جدولة تحليل متابعة';
+
+  @override
+  String reviewKeyRisks(Object count) {
+    return 'مراجعة $count من المخاطر الرئيسية';
+  }
+
+  @override
+  String get keyFindings => 'النتائج الرئيسية';
+
+  @override
+  String get highestImpactClauses => 'البنود الأعلى تأثيراً';
+
+  @override
+  String get suggestedNextSteps => 'الخطوات المقترحة التالية';
+
+  @override
+  String get noAnalysisData => 'لا توجد بيانات تحليل متاحة';
+
+  @override
+  String get aiChat => 'دردشة الذكاء الاصطناعي';
+
+  @override
+  String get contractComparison => 'مقارنة العقود';
+
+  @override
+  String get clauseDetails => 'تفاصيل البند';
+
+  @override
+  String get noClauseData => 'لا توجد بيانات بند متاحة';
+
+  @override
+  String get recommendation => 'التوصية';
+
+  @override
+  String get clause => 'بند';
+
+  @override
+  String get complianceScore => 'نقاط الامتثال';
+
+  @override
+  String get highRisk => 'مخاطر مرتفعة';
+
+  @override
+  String get mediumRisk => 'مخاطر متوسطة';
+
+  @override
+  String get continueWithGoogle => 'المتابعة بحساب Google';
 }

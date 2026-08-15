@@ -125,43 +125,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get integrationsConnected => 'DocuSign, SharePoint connected';
 
-  // Onboarding translations
-  @override
-  String get onboardingTitle1 => 'Intelligent Contract Analysis';
-
-  @override
-  String get onboardingSubtitle1 => 'تحليل العقود بذكاء';
-
-  @override
-  String get onboardingDescription1 => 'Use AI to understand and analyze legal contracts with precision and speed. Extract key terms and identify potential risks in seconds.';
-
-  @override
-  String get onboardingTitle2 => 'AI-Powered Insights';
-
-  @override
-  String get onboardingSubtitle2 => 'رؤى مدعومة بالذكاء الاصطناعي';
-
-  @override
-  String get onboardingDescription2 => 'Get instant insights on contract clauses, risks, and compliance. Our AI analyzes contracts like a senior legal expert.';
-
-  @override
-  String get onboardingTitle3 => 'Multi-Language Support';
-
-  @override
-  String get onboardingSubtitle3 => 'دعم متعدد اللغات';
-
-  @override
-  String get onboardingDescription3 => 'Analyze contracts in multiple languages with automatic translation and comparison capabilities.';
-
-  @override
-  String get skip => 'Skip';
-
-  @override
-  String get next => 'Next';
-
-  @override
-  String get getStarted => 'Get Started';
-
   @override
   String get appearance => 'Appearance';
 
@@ -173,4 +136,327 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get system => 'System';
+
+  @override
+  String get analysisResults => 'Analysis Results';
+
+  @override
+  String get summary => 'Summary';
+
+  @override
+  String get clauses => 'Clauses';
+
+  @override
+  String get riskTagHigh => 'High Risk';
+
+  @override
+  String get riskTagMedium => 'Medium Risk';
+
+  @override
+  String get riskTagLow => 'Low Risk';
+
+  @override
+  String get compareContracts => 'Compare Contracts';
+
+  @override
+  String get sideBySideView => 'Side-by-Side View';
+
+  @override
+  String get diffHighlights => 'Differences';
+
+  @override
+  String get typeAQuestion => 'Type a question…';
+
+  @override
+  String get analyzeButton => 'Analyze';
+
+  @override
+  String get analyzing => 'Analyzing…';
+
+  @override
+  String get startAiChat => 'Start AI Chat';
+
+  @override
+  String get backendUrl => 'Backend URL';
+
+  @override
+  String get backendUrlHint => 'Edit when the LAN address changes';
+
+  @override
+  String get noAnalysesYet => 'No analyses yet';
+
+  @override
+  String get analyzeContractFirst => 'Analyze a contract first';
+
+  @override
+  String get sources => 'Sources';
+
+  @override
+  String get clauseSingular => 'clause';
+
+  @override
+  String get clausePlural => 'clauses';
+
+  @override
+  String get deleteHistoryEntry => 'Delete entry?';
+
+  @override
+  String get deleteHistoryConfirm => 'This will remove it from history on this device.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get pickFirstContract => 'Pick first contract';
+
+  @override
+  String get pickSecondContract => 'Pick second contract';
+
+  @override
+  String get compare => 'Compare';
+
+  @override
+  String get analyzeFailed => 'Analysis failed';
+
+  @override
+  String get comparisonFailed => 'Comparison failed';
+
+  @override
+  String get chatFailed => 'Chat failed';
+
+  @override
+  String get exportDisabledTooltip => 'Export is not available in this version';
+
+  @override
+  String get exportReport => 'Export Report';
+
+  @override
+  String get pickDifferentFile => 'Pick a different file';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get backendUrlSaved => 'Backend URL saved';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get needsReview => 'Needs Review';
+
+  @override
+  String get critical => 'Critical';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get deleteEntry => 'Delete entry?';
+
+  @override
+  String get deleteEntryConfirmation => 'This will remove it from history on this device.';
+
+  @override
+  String get recentActivity => 'Recent Activity';
+
+  @override
+  String get sortedByMostRecent => 'Sorted by most recent';
+
+  @override
+  String get monitoringActive => 'Monitoring active';
+
+  @override
+  String get priorityItems => 'Priority items';
+
+  @override
+  String get clausesCount => 'clauses';
+
+  @override
+  String get low => 'Low';
+
+  @override
+  String get high => 'High';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get noComparisonData => 'No comparison data';
+
+  @override
+  String get compareTwoContracts => 'Compare two contracts';
+
+  @override
+  String get chatSession => 'Chat Session';
+
+  @override
+  String get preparingRag => 'Preparing RAG…';
+
+  @override
+  String get askAiSummarizeNegotiate => 'Ask AI to summarize, compare, or negotiate';
+
+  @override
+  String get noActiveChatSession => 'No active chat session';
+
+  @override
+  String get startNewSessionPrompt => 'Start a new session to begin chatting with AI';
+
+  @override
+  String get startNewSession => 'Start New Session';
+
+  @override
+  String get noMessagesYet => 'No messages yet';
+
+  @override
+  String get askQuestionToStart => 'Ask a question to start';
+
+  @override
+  String get typeQuestionPlaceholder => 'Type your question…';
+
+  @override
+  String get closeSession => 'Close Session';
+
+  @override
+  String get aiSummary => 'AI Summary';
+
+  @override
+  String get contractAnalysis => 'Contract Analysis';
+
+  @override
+  String get noRecentAnalyses => 'No recent analyses';
+
+  @override
+  String get analyzeFirstContract => 'Analyze first contract';
+
+  @override
+  String get noHistoryYet => 'No history yet';
+
+  @override
+  String get clearHistory => 'Clear History';
+
+  @override
+  String get clearHistoryConfirmation => 'This will remove all history entries from this device.';
+
+  @override
+  String get unknownVersion => 'Unknown version';
+
+  @override
+  String get aiRecommendations => 'AI Recommendations';
+
+  @override
+  String get suggestedEditsRationale => 'Suggested edits & rationale';
+
+  @override
+  String get needsAction => 'Needs Action';
+
+  @override
+  String get inContract1 => 'In contract 1';
+
+  @override
+  String get inContract2 => 'In contract 2';
+
+  @override
+  String get noSignificantDifferences => 'No significant differences found';
+
+  @override
+  String get clauseDifferencesAiSummary => 'Clause differences — AI summary';
+
+  @override
+  String get aiSummarizedDeltas => 'AI-summarized deltas';
+
+  @override
+  String get uploadContract => 'Upload Contract';
+
+  @override
+  String get compareVersions => 'Compare Versions';
+
+  @override
+  String get none => 'None';
+
+  @override
+  String get summaryScore => 'Summary Score';
+
+  @override
+  String get aiConfidenceRiskPosture => 'AI confidence & risk posture';
+
+  @override
+  String get overallCompliance => 'Overall Compliance';
+
+  @override
+  String get criticalIssues => 'Critical Issues';
+
+  @override
+  String get negotiableClauses => 'Negotiable Clauses';
+
+  @override
+  String get shareHighRiskWithCounsel => 'Share high-risk items with counsel';
+
+  @override
+  String get requestRedlinesForHighRisk => 'Request redlines for high-risk clauses';
+
+  @override
+  String get scheduleFollowUpAnalysis => 'Schedule follow-up analysis';
+
+  @override
+  String reviewKeyRisks(Object count) {
+    return 'Review $count key risks';
+  }
+
+  @override
+  String get keyFindings => 'Key Findings';
+
+  @override
+  String get highestImpactClauses => 'Highest impact clauses';
+
+  @override
+  String get suggestedNextSteps => 'Suggested next steps';
+
+  @override
+  String get noAnalysisData => 'No analysis data available';
+
+  @override
+  String get aiChat => 'AI Chat';
+
+  @override
+  String get contractComparison => 'Contract Comparison';
+
+  @override
+  String get clauseDetails => 'Clause Details';
+
+  @override
+  String get noClauseData => 'No clause data available';
+
+  @override
+  String get recommendation => 'Recommendation';
+
+  @override
+  String get clause => 'clause';
+
+  @override
+  String get complianceScore => 'Compliance Score';
+
+  @override
+  String get highRisk => 'High Risk';
+
+  @override
+  String get mediumRisk => 'Medium Risk';
+
+  @override
+  String get continueWithGoogle => 'Continue with Google';
 }

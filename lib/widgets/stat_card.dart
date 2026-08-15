@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
 import 'app_card.dart';
 
 class StatCard extends StatelessWidget {
@@ -19,10 +18,11 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
 
     return AppCard(
-      background: accent?.withValues(alpha: 0.08) ?? AppColors.surface,
+      background: accent?.withValues(alpha: 0.08),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -34,7 +34,7 @@ class StatCard extends StatelessWidget {
             Text(
               trend!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: accent ?? AppColors.onSurface,
+                color: accent ?? colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
               ),
             ),

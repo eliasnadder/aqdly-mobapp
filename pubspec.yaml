@@ -13,11 +13,15 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  dio: ^5.7.0
+  uuid: ^4.5.1
   firebase_core: ^4.13.0
   firebase_auth: ^6.0.0
   google_sign_in: ^6.2.1
   file_picker: ^8.1.4
   shared_preferences: ^2.2.3
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -27,8 +31,6 @@ dev_dependencies:
   intl: ^0.20.2
   bloc_test: ^9.1.7
   provider: ^6.1.1
-  flutter_bloc: ^8.1.6
-  equatable: ^2.0.5
   flutter_localizations:
     sdk: flutter
 
