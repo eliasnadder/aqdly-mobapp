@@ -50,8 +50,8 @@ class ApiClient {
 
     _dio!.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          _addAuthHeader(options);
+        onRequest: (options, handler) async {
+          await _addAuthHeader(options);
           handler.next(options);
         },
         onError: (DioException err, ErrorInterceptorHandler handler) {
@@ -105,17 +105,31 @@ class ApiClient {
 
     if (!needsAuth) return;
 
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
+    // Try to get the current user, waiting briefly if needed
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // User just signed in but auth state hasn't propagated yet
+      // Wait briefly for auth state to settle (max 2 seconds)
+      try {
+        await FirebaseAuth.instance
+            .authStateChanges()
+            .firstWhere((u) => u != null)
+            .timeout(const Duration(seconds: 2));
+        user = FirebaseAuth.instance.currentUser;
+      } catch (e) {
+        // Timeout or no user, proceed without auth (will get 401)
+      }
+    }
+
+    if (user != null) {
+      try {
         final token = await user.getIdToken(true); // force refresh if needed
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
+      } catch (e) {
+        // Token retrieval failed
       }
-    } catch (e) {
-      // Token retrieval failed, request will proceed without auth
-      // Server will return 401 if auth is actually required
     }
   }
 
